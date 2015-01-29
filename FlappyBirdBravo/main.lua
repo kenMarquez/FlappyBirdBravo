@@ -58,7 +58,7 @@ gnd1=display.newImage("ground.png", 0, h )
 physics.addBody( gnd1, "static" )
 gnd2=display.newImage("ground.png", 0, h )
 physics.addBody( gnd2, "static" )
-offset=-35
+offset=-3
 gnd2.x=gnd1.x+gnd1.width*0.5+gnd2.width*0.5+offset
 --ground2=display.newImage("ground.png", w, h )
 
@@ -79,5 +79,5 @@ local function moveground( event )
 end
 
 Runtime:addEventListener( "enterFrame", moveground )
-
+---holasbolas
 
