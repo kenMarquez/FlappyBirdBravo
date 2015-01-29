@@ -34,7 +34,22 @@ bird.y = 100
 physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
 --aumenta la gravedad para que el pájaro caiga más rápido
 bird.gravityScale = 2
---pausa para que la física se active cuando se haga el primer tap
+--crea dos pipes que se mueven (posteriormente agregaré mas es solo para pruebas de colision)
+--define un espacio entre pipes
+local gap = h * 0.3
+--pone dos pipes
+pipedown = display.newImage("pipeDown.png",w,h+gap)
+pipeup = display.newImage("pipeUp.png",w,-gap)
+--le pone fisica a los pipes
+physics.addBody( pipedown, "kinematic" )
+physics.addBody( pipeup, "kinematic" )
+--define velocidad de pipes
+local vel = -100
+--mueve pipes
+pipedown:setLinearVelocity( vel, 0)
+pipeup:setLinearVelocity( vel, 0)
+
+--pausa para que la física se active cuando se haga el primer
 physics.pause()
 
 
