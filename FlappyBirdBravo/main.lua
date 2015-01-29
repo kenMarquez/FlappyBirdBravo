@@ -7,6 +7,7 @@
 local function myTapListener( event )
 	--inicia lla fisica, talvez esto debería de ejecutarse solo la primera vez
 	physics.start()
+	paused = false
     --code executed when the button is tapped
     print( "object tapped = "..tostring(event.target) )  --'event.target' is the tapped object
     --bird:applyForce(0,-500,bird.x,bird.y)
@@ -41,18 +42,42 @@ local gap = h * 0.3
 pipedown = display.newImage("pipeDown.png",w,h+gap)
 pipeup = display.newImage("pipeUp.png",w,-gap)
 --le pone fisica a los pipes
-physics.addBody( pipedown, "kinematic" )
-physics.addBody( pipeup, "kinematic" )
+physics.addBody( pipedown, "static" )
+physics.addBody( pipeup, "static" )
 --define velocidad de pipes
-local vel = -100
+vel = -4
 --mueve pipes
-pipedown:setLinearVelocity( vel, 0)
-pipeup:setLinearVelocity( vel, 0)
+
 
 --pausa para que la física se active cuando se haga el primer
 physics.pause()
+paused = true
 
 
+gnd1=display.newImage("ground.png", 0, h )
+physics.addBody( gnd1, "static" )
+gnd2=display.newImage("ground.png", 0, h )
+physics.addBody( gnd2, "static" )
+offset=-35
+gnd2.x=gnd1.x+gnd1.width*0.5+gnd2.width*0.5+offset
+--ground2=display.newImage("ground.png", w, h )
 
+--ground1.y =ground1.height-ground1.height*0.5
+local function moveground( event )
+	if (paused == false) then
+	gnd1.x = gnd1.x + vel
+	gnd2.x = gnd2.x + vel
+	pipedown.x = pipedown.x + vel
+	pipeup.x = pipeup.x + vel
+	end
+	if(gnd1.x< -gnd1.width * 0.5) then
+		gnd1.x = gnd2.x + gnd2.width*0.5 + gnd1.width*0.5+offset
+	end
+	if(gnd2.x< -gnd2.width * 0.5) then
+		gnd2.x = gnd1.x + gnd1.width*0.5 + gnd2.width*0.5+offset
+	end
+end
+
+Runtime:addEventListener( "enterFrame", moveground )
 
 
