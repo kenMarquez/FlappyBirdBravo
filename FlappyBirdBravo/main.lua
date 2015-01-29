@@ -12,6 +12,7 @@ local function myTapListener( event )
     print( "object tapped = "..tostring(event.target) )  --'event.target' is the tapped object
     --bird:applyForce(0,-500,bird.x,bird.y)
     --El pajaro salta con velocidad
+  bird.rotation=-45
 	bird:setLinearVelocity(0,-300)
     return true
 end
@@ -26,17 +27,39 @@ h = display.viewableContentHeight
 --carga la imagen de fondo
 local background = display.newImageRect("bg.png",w*2,h*2)
 background:addEventListener("tap",myTapListener)
---carga la imagen del pájaro
- bird = display.newImage("bird1.png",100*0.5,100*0.5)
- --coloca el pájar en esas coordenadas
-bird.x = 150
-bird.y = 100
+-- --carga la imagen del pájaro
+--  bird2 = display.newImage("bird1.png",100*0.5,100*0.5)
+--  --coloca el pájar en esas coordenadas
+-- bird2.x = 150
+-- bird2.y = 100
+
+-- -- creamos animacion del pajaro
+-- local sheetData = { width=17, height=12, numFrames=2, sheetContentWidth=17, sheetContentHeight=24 }
+-- local mySheet = graphics.newImageSheet( "images/flappy.png", sheetData )
+-- local runningSecuenceFly ={name="normalRun",start=1,count=2,time=800,loopCount,loopDirection="forward"}
+-- local animation =display.newSprite(mySheet,runningSecuenceFly)
+-- animation.x = display.contentWidth/2  --center the sprite horizontally
+--   animation.y = display.contentHeight/2  --center the sprite vertically
+--   animation.xScale = 3 * animation.xScale
+--   animation.yScale = 3 * animation.yScale
+--   animation:play()
 
 
-local sheetData = { width=17, height=12, numFrames=2, sheetContentWidth=17, sheetContentHeight=24 }
-local mySheet = graphics.newImageSheet( "images/flappy.png", sheetData )
+local sheetData2 = { width=92, height=64, numFrames=3, sheetContentWidth=276, sheetContentHeight=64 }
+local mySheet2 = graphics.newImageSheet( "images/bird.png", sheetData2 )
+local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=550,loopCount,loopDirection="forward"}
+bird =display.newSprite(mySheet2,runningSecuenceFly2)
+bird.x = display.contentWidth/3  --center the sprite horizontally
+bird.y = display.contentHeight/3  --center the sprite vertically
+bird.xScale = 0.4 * bird.xScale
+bird.yScale = 0.4 * bird.yScale
+
+bird:play()  
+
+
+
 --le añade dísica al´pájaro
-physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
+physics.addBody(bird,{density=1,friction=19.5,bounce=0.3})
 --aumenta la gravedad para que el pájaro caiga más rápido
 bird.gravityScale = 2
 --crea dos pipes que se mueven (posteriormente agregaré mas es solo para pruebas de colision)
@@ -49,7 +72,7 @@ pipeup = display.newImage("pipeUp.png",w,-gap)
 physics.addBody( pipedown, "static" )
 physics.addBody( pipeup, "static" )
 --define velocidad de pipes
-vel2 = -4
+vel = -4
 
 --mueve pipes
 
@@ -74,6 +97,7 @@ local function moveground( event )
 	gnd2.x = gnd2.x + vel
 	pipedown.x = pipedown.x + vel
 	pipeup.x = pipeup.x + vel
+
 	end
 	if(gnd1.x< -gnd1.width * 0.5) then
 		gnd1.x = gnd2.x + gnd2.width*0.5 + gnd1.width*0.5+offset
