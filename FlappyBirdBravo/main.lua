@@ -31,6 +31,10 @@ background:addEventListener("tap",myTapListener)
  --coloca el pájar en esas coordenadas
 bird.x = 150
 bird.y = 100
+
+
+local sheetData = { width=17, height=12, numFrames=2, sheetContentWidth=17, sheetContentHeight=24 }
+local mySheet = graphics.newImageSheet( "images/flappy.png", sheetData )
 --le añade dísica al´pájaro
 physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
 --aumenta la gravedad para que el pájaro caiga más rápido
@@ -45,7 +49,8 @@ pipeup = display.newImage("pipeUp.png",w,-gap)
 physics.addBody( pipedown, "static" )
 physics.addBody( pipeup, "static" )
 --define velocidad de pipes
-vel = -4
+vel2 = -4
+
 --mueve pipes
 
 
