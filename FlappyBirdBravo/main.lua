@@ -44,8 +44,9 @@ background:addEventListener("tap",myTapListener)
 	local mySheet2 = graphics.newImageSheet( "images/bird2.png", sheetData2 )
 	local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=550,loopCount,loopDirection="forward"}
 	bird =display.newSprite(mySheet2,runningSecuenceFly2)
-	bird.x = display.contentWidth/3  --center the sprite horizontally
-	bird.y = display.contentHeight/3  --center the sprite vertically
+	bird.x = display.contentWidth/4  --center the sprite horizontally
+	xposition = bird.x
+	bird.y = display.contentHeight/2  --center the sprite vertically
 	bird.xScale = 0.9 * bird.xScale
 	bird.yScale = 0.9 * bird.yScale
 
@@ -115,8 +116,15 @@ pipedown2.y = math.random(minpipe, maxpipe)
 pipeup2.y = pipedown2.y - pipedown2.height * 0.5 - pipeup2.height * 0.5 - gap
 pipeup2.x = pipedown2.x
 
+newpipe1 = true
+newpipe2 = true
+
 
 local function moveground( event )
+	bird.x = xposition
+	if (bird.y < -bird.height*2) then
+		bird.y = -bird.height*2
+	end
 	--sino esta en pausa o muerto el ground se mueve
 	if (not paused  and not isdead ) then
 	pipedown1.x = pipedown1.x + vel
@@ -142,6 +150,7 @@ local function moveground( event )
 		pipedown1.y = math.random(minpipe, maxpipe)
 		pipeup1.y = pipedown1.y - pipedown1.height * 0.5 - pipeup1.height * 0.5 - gap
 		pipeup1.x = w + pipeup1.width
+		newpipe1 = true
 	end
 	
 	if(pipedown2.x < -pipedown2.width * 0.5) then
@@ -149,10 +158,41 @@ local function moveground( event )
 		pipedown2.y = math.random(minpipe, maxpipe)
 		pipeup2.y = pipedown2.y - pipedown2.height * 0.5 - pipeup2.height * 0.5 - gap
 		pipeup2.x = w + pipeup2.width
+		newpipe2 = true
 	end
 
 end
 
+
 Runtime:addEventListener( "enterFrame", moveground )
 
+score = 0
+displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
+local function scoreupdate( event )
+	display.remove( displayscore )
+	displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
+	if (pipedown1.x < bird.x and newpipe1) then
+		newpipe1 = false
+		score = score + 1
+		print(score)
+	end
 
+	if (pipedown2.x < bird.x and newpipe2) then
+		newpipe2 = false
+		score = score + 1
+		print(score)
+	end
+
+end
+
+local function birdcollision(self, event)
+   if event.phase == "began" then
+       isdead = true
+       bird:pause()
+   end
+end
+       
+bird.collision = birdcollision
+bird:addEventListener("collision",bird)
+
+Runtime:addEventListener( "enterFrame", scoreupdate )
