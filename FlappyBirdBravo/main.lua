@@ -11,8 +11,16 @@ local function myTapListener( event )
     --code executed when the button is tapped
     print( "object tapped = "..tostring(event.target) )  --'event.target' is the tapped object
     --bird:applyForce(0,-500,bird.x,bird.y)
-    --El pajaro salta con velocidad
-  bird.rotation=-45
+    --El pajaro salta con velocidad  bird.rotation=-45
+ --  transition.cancel()
+	-- bird:setLinearVelocity(0,-300)
+ --  transition.to( bird, { rotation=-35 , time=210, transition=easing.inOutSine } )
+ --  transition.to( bird, { rotation=89 , time=250, delay=700,transition=easing.inOutSine } )    
+	-- bird:setLinearVelocity(0,-300)
+	transition.cancel()
+	bird:setLinearVelocity(0,-205)
+  transition.to( bird, { rotation=-31 , time=240, transition=easing.inOutSine } )
+  transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
 	bird:setLinearVelocity(0,-300)
     return true
 end
@@ -25,37 +33,32 @@ physics.start()
 w = display.viewableContentWidth
 h = display.viewableContentHeight
 --carga la imagen de fondo
-local background = display.newImageRect("bg.png",w*2,h*2)
+local background = display.newImageRect("images/background-night.png",w*2,h*2)
 background:addEventListener("tap",myTapListener)
--- --carga la imagen del pájaro
---  bird2 = display.newImage("bird1.png",100*0.5,100*0.5)
---  --coloca el pájar en esas coordenadas
--- bird2.x = 150
--- bird2.y = 100
-
--- -- creamos animacion del pajaro
--- local sheetData = { width=17, height=12, numFrames=2, sheetContentWidth=17, sheetContentHeight=24 }
--- local mySheet = graphics.newImageSheet( "images/flappy.png", sheetData )
--- local runningSecuenceFly ={name="normalRun",start=1,count=2,time=800,loopCount,loopDirection="forward"}
--- local animation =display.newSprite(mySheet,runningSecuenceFly)
--- animation.x = display.contentWidth/2  --center the sprite horizontally
---   animation.y = display.contentHeight/2  --center the sprite vertically
---   animation.xScale = 3 * animation.xScale
---   animation.yScale = 3 * animation.yScale
---   animation:play()
 
 
-local sheetData2 = { width=92, height=64, numFrames=3, sheetContentWidth=276, sheetContentHeight=64 }
-local mySheet2 = graphics.newImageSheet( "images/bird.png", sheetData2 )
-local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=550,loopCount,loopDirection="forward"}
-bird =display.newSprite(mySheet2,runningSecuenceFly2)
-bird.x = display.contentWidth/3  --center the sprite horizontally
-bird.y = display.contentHeight/3  --center the sprite vertically
-bird.xScale = 0.4 * bird.xScale
-bird.yScale = 0.4 * bird.yScale
+--carga la imagen del pájaro
+--corta el spriteSheet con las medidas de la imagen y crea la secuencia de los sprites
+	
+	local sheetData2 = { width=40, height=27.5, numFrames=3, sheetContentWidth=40, sheetContentHeight=84 }
+	local mySheet2 = graphics.newImageSheet( "images/bird2.png", sheetData2 )
+	local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=550,loopCount,loopDirection="forward"}
+	bird =display.newSprite(mySheet2,runningSecuenceFly2)
+	bird.x = display.contentWidth/3  --center the sprite horizontally
+	bird.y = display.contentHeight/3  --center the sprite vertically
+	bird.xScale = 0.9 * bird.xScale
+	bird.yScale = 0.9 * bird.yScale
 
-bird:play()  
+	bird:play()  
 
+	--funcion que simula el salto de pajaro al principio
+	  local function bounceFlappy(flappy, speed)
+	    local function bounceFlappyDown(flappy)
+	      transition.to( flappy, { y = flappy.y + 13 , time=300, transition=easing.inOutSine, onComplete=bounceFlappy } )
+	    end
+	    transition.to( flappy, { y = flappy.y - 13 , time=300, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
+	  end
+	  bounceFlappy(bird)
 
 
 --le añade dísica al´pájaro
@@ -65,8 +68,8 @@ physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
 -- aumenta la gravaded para que el pájaro caiga más rápido
 bird.gravityScale = 2
 --define la distancia entre los pipes en funcion del tamaño del pájaro
-gap = bird.height * 2
-
+--gap = bird.height * 2
+gap = bird.height *4
 --saca dos pares de pipes
 pipedown1 = display.newImage("pipeDown.png",w * 2,h)
 pipeup1 = display.newImage("pipeUp.png",w * 2,-gap)
@@ -74,10 +77,10 @@ pipedown2 = display.newImage("pipeDown.png",w * 4,h)
 pipeup2 = display.newImage("pipeUp.png",w * 2,-gap)
 
 --aumenta la gravedad para que el pájaro caiga más rápido
-bird.gravityScale = 2
+--bird.gravityScale = 2
 
 vel = -4
-
+--physics.addBody(bird,"static")
 --les pone física a los pipes
 physics.addBody( pipedown1, "static" )
 physics.addBody( pipeup1, "static" )
