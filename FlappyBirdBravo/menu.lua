@@ -229,19 +229,19 @@
 		local function birdcollision(self, event)
 		   if event.phase == "began" then
 		   		--background:setFillColor(255,255,255)
-
+		   		
 		   	if(not isdead) then
 
 		   	   rectangulo = display.newRect(w*0.5,h*0.5,w*2,h*2)
 
 		   	   rectangulo:setFillColor(255,255,255)
 		       transition.to(rectangulo,{time=100,alpha=0 })
-		       
+
+		       --composer.gotoScene("menu")
+
 		   	end
 		       isdead = true
 		       bird:pause()
-
-
 		   end
 		end
 		       
