@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+--<<<<<<< HEAD
 -----------------------------------------------------------------------------------------
 --
 -- main.lua
@@ -126,8 +126,8 @@ bird:addEventListener("collision",bird)
 local menusound = audio.loadSound("menu.mp3")
 local golpesound = audio.loadSound("golpe.mp3")
 local caidasound = audio.loadSound("caida.mp3")
-=======
+--=======
 local composer = require( "composer" )
 composer.gotoScene( "menu" )
->>>>>>> origin/master
+-->>>>>>> origin/master
 
