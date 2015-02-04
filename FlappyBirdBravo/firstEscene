@@ -1,0 +1,41 @@
+    local composer = require( "composer" )
+    physics = require("physics")
+    local scene = composer.newScene()
+
+
+
+
+    function scene:create( event )
+
+        local sceneGroup = self.view
+        w = display.contentWidth
+       h = display.contentHeight
+        --w = display.viewableContentWidth
+        -- h = display.viewableContentHeight
+        -- --carga la imagen de fondo
+        background = display.newImageRect("images/background-night.png",w*2,h*2)
+        background:addEventListener("tap",myTapListener)
+        sceneGroup:insert( background )
+    end
+
+
+function scene:show( event )
+
+    local sceneGroup = self.view
+    local phase = event.phase
+
+     if ( phase == "did" ) then    
+        local function touchHandler ( event )
+            if "ended" == event.phase then
+                
+            end
+        end
+        
+    end
+end
+
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+
+
+return scene

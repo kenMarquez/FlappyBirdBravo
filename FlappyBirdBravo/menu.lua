@@ -1,4 +1,5 @@
 	composer = require( "composer" )
+	composer.removeHidden()
 	physics = require("physics")
 	local scene = composer.newScene()
 
@@ -34,10 +35,11 @@
 			-- bird:setLinearVelocity(0,-300)
 			transition.cancel()
 			bird:setLinearVelocity(0,-200)
-		  transition.to( bird, { rotation=-30 , time=220, transition=easing.inOutSine } )
-		  transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
+		  	
+		  	transition.to( bird, { rotation=-30 , time=220, transition=easing.inOutSine } )
+		 	transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
 			bird:setLinearVelocity(0,-245)
-		    return true
+		  	return true
 		end
 
 	-- "scene:create()"
@@ -140,8 +142,8 @@
 		physics.addBody( gnd2, "static" )
 		--define un offset para una buena continuidad entre los grounds
 		offset=-0
-		--coloca el segundo ground
-		gnd2.x=gnd1.x+gnd1.width*0.5+gnd2.width*0.5+offset
+		--coloca el segundo ground		
+		gnd2.x = gnd1.x + gnd1.width * 0.5 + gnd2.width*0.5 + offset
 		--define la distancia maxima y minima de los pipes
 		maxpipe = h + pipedown1.height * 0.5 - gnd1.height
 		minpipe = pipedown1.height * 0.5 + gap
