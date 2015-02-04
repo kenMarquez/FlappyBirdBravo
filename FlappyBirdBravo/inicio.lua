@@ -129,7 +129,8 @@ function scene:destroy( event )
    display.remove(bird)
    display.remove(play)
    display.remove(splashImage)	  
-   
+   display.remove(gnd1)
+   display.remove(gnd2)
 
 
 end

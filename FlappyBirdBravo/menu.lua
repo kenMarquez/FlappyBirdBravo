@@ -214,11 +214,11 @@
 		Runtime:addEventListener( "enterFrame", moveground )
 
 		score = 0
-		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
+--		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 35 )
 		local function scoreupdate( event )
-			display.remove( displayscore )
-			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
-			if (pipedown1.x-pipedown2.width/3 <= bird.x and newpipe1) then
+--			display.remove( displayscore )
+--			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
+			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
 				local punto = audio.loadSound("sounds/punto.mp3")
 				audio.play(punto)
 				newpipe1 = false
@@ -227,9 +227,10 @@
 
 			end
 
-			if (pipedown2.x-pipedown2.width/2 <= bird.x and newpipe2) then
+			if (pipedown2.x-pipedown2.width/3.1 <= bird.x and newpipe2) then
 				local punto = audio.loadSound("sounds/punto.mp3")
 				audio.play(punto)
+
 				newpipe2 = false
 				score = score + 1
 				print(score)
@@ -240,10 +241,22 @@
 		local function birdcollision(self, event)
 		   if event.phase == "began" then
 		   		--background:setFillColor(255,255,255)
+
+		   	local function  secondSound( event )
+		   		local golpe = audio.loadSound("sounds/caida.mp3")
+				audio.play(golpe)
+		   	end
 		   		
 		   	if(not isdead) then
 		   		local golpe = audio.loadSound("sounds/golpe.mp3")
 				audio.play(golpe)
+				print(gnd1.y)
+				print(bird.y)
+				altura = gnd1.y-gnd1.height+3
+				print(altura)
+				if ( bird.y < altura) then
+					timer.performWithDelay(500,secondSound)
+				end
 		   	   rectangulo = display.newRect(w*0.5,h*0.5,w*2,h*2)
 
 		   	   rectangulo:setFillColor(255,255,255)
