@@ -214,10 +214,10 @@
 		Runtime:addEventListener( "enterFrame", moveground )
 
 		score = 0
---		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 35 )
+		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 		local function scoreupdate( event )
---			display.remove( displayscore )
---			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
+			display.remove( displayscore )
+			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
 				local punto = audio.loadSound("sounds/punto.mp3")
 				audio.play(punto)
@@ -227,7 +227,7 @@
 
 			end
 
-			if (pipedown2.x-pipedown2.width/3.1 <= bird.x and newpipe2) then
+			if (pipedown2.x-pipedown2.width/2.8 <= bird.x and newpipe2) then
 				local punto = audio.loadSound("sounds/punto.mp3")
 				audio.play(punto)
 
