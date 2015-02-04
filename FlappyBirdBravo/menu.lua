@@ -35,6 +35,10 @@
 			-- bird:setLinearVelocity(0,-300)
 			transition.cancel()
 			bird:setLinearVelocity(0,-200)
+
+
+			local vuelosound = audio.loadSound("sounds/vuelo.mp3")
+			audio.play(vuelosound)
 		  	
 		  	transition.to( bird, { rotation=-30 , time=220, transition=easing.inOutSine } )
 		 	transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
@@ -214,13 +218,18 @@
 		local function scoreupdate( event )
 			display.remove( displayscore )
 			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 24 )
-			if (pipedown1.x < bird.x and newpipe1) then
+			if (pipedown1.x-pipedown2.width/3 <= bird.x and newpipe1) then
+				local punto = audio.loadSound("sounds/punto.mp3")
+				audio.play(punto)
 				newpipe1 = false
 				score = score + 1
 				print(score)
+
 			end
 
-			if (pipedown2.x < bird.x and newpipe2) then
+			if (pipedown2.x-pipedown2.width/2 <= bird.x and newpipe2) then
+				local punto = audio.loadSound("sounds/punto.mp3")
+				audio.play(punto)
 				newpipe2 = false
 				score = score + 1
 				print(score)
@@ -233,7 +242,8 @@
 		   		--background:setFillColor(255,255,255)
 		   		
 		   	if(not isdead) then
-
+		   		local golpe = audio.loadSound("sounds/golpe.mp3")
+				audio.play(golpe)
 		   	   rectangulo = display.newRect(w*0.5,h*0.5,w*2,h*2)
 
 		   	   rectangulo:setFillColor(255,255,255)
