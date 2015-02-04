@@ -1,8 +1,24 @@
 	composer = require( "composer" )
 	composer.removeHidden()
 	physics = require("physics")
+	widget = require("widget")
 	local scene = composer.newScene()
+	local ego =require("ego" )
+	local saveFile = ego.saveFile
+	local loadFile = ego.loadFile
 
+	local function checkForFile ()
+		if highscore == "empty" then
+		highscore = 0
+		saveFile("highscore.txt", highscore)
+		print ("Highscore is", highscore)
+			end
+		end
+
+		timer.performWithDelay( 0, checkForFile )
+		highscore = loadFile ("highscore.txt")
+
+		print ("Highscore is", highscore)
 	---------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE
 	-- unless "composer.removeScene()" is called.
@@ -20,6 +36,7 @@
 		end
 			display.remove(rectangulo)
 				--inicia lla fisica, talvez esto debería de ejecutarse solo la primera vez
+		if (not isdead) then
 			physics.start()
 			paused = false
 			isdead = false
@@ -43,6 +60,7 @@
 		  	transition.to( bird, { rotation=-30 , time=220, transition=easing.inOutSine } )
 		 	transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
 			bird:setLinearVelocity(0,-245)
+		end
 		  	return true
 		end
 
@@ -138,6 +156,7 @@
 		physics.pause()
 		paused = true
 		isdead = false
+		reload = false
 
 		--despliega un par de ground para estar en infinito movimiento y les añade física
 		gnd1=display.newImage("ground.png", 0, h )
@@ -214,15 +233,38 @@
 		Runtime:addEventListener( "enterFrame", moveground )
 
 		score = 0
+
+		function scorepoints( event )
+			if (displayscore ~= nil) then
+				display.remove( displayscore )
+			end
+			if (displayhighscore ~= nil) then
+				display.remove( displayhighscore )
+			end
+
+			displayscore = display.newText( tostring (score), w * 0.5 + 75, h*0.3 -18, "font", 14 )
+			displayhighscore = display.newText( highscore, w * 0.5 + 75, h*0.3 + 25, "font", 14 )
+		end
+
 		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 		local function scoreupdate( event )
 			display.remove( displayscore )
+			if (displayhighscore ~= nil) then
+				display.remove( displayhighscore )
+			end
+
+			if (not isdead) then
 			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+			end
 			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
 				local punto = audio.loadSound("sounds/punto.mp3")
 				audio.play(punto)
 				newpipe1 = false
 				score = score + 1
+				if (score> tonumber(highscore)) then
+					highscore = score
+					saveFile("highscore.txt", highscore)
+				end
 				print(score)
 
 			end
@@ -233,14 +275,96 @@
 
 				newpipe2 = false
 				score = score + 1
+				if (score> tonumber(highscore)) then
+					highscore = score
+					saveFile("highscore.txt", highscore)
+				end
 				print(score)
 			end
 
 		end
 
+		local function Replay( event )
+
+		if ( "ended" == event.phase ) then
+		display.remove( button1 )
+		display.remove( scoreboard)
+		display.remove( gameover )
+
+		bird.x = display.contentWidth/4
+		bird.y = display.contentHeight/2
+		bird:play() 
+		bird:setLinearVelocity( 0, 0 )
+		bird.rotation = 0
+		isdead = false
+		score = 0
+		physics.pause( )
+		paused = true
+		bounceFlappy(bird)
+		--coloca los pipes en alturas random
+		pipedown1.x = w * 2
+		pipedown1.y = math.random(minpipe, maxpipe)
+		pipeup1.y = pipedown1.y - pipedown1.height * 0.5 - pipeup1.height * 0.5 - gap
+		pipeup1.x=pipedown1.x
+		--coloca el segundo par de pipes
+		pipedown2.x = pipedown1.x + pipedown1.width * 4
+		pipedown2.y = math.random(minpipe, maxpipe)
+		pipeup2.y = pipedown2.y - pipedown2.height * 0.5 - pipeup2.height * 0.5 - gap
+		pipeup2.x = pipedown2.x
+
+		newpipe1 = true
+		newpipe2 = true
+		print( "Button was pressed and released" )
+
+		splashImage = display.newImage("images/splash.png")
+		splashImage:translate( w /2, h/2 )
+		visibleSplash = true
+		splashImage.alpha = 0
+		bird:addEventListener("collision",bird)
+		Runtime:removeEventListener( "enterFrame", scorepoints )
+		local function addlisten( event )
+			background:addEventListener("tap",myTapListener)
+		end
+
+		transition.to(splashImage,{time=150000,alpha=250})
+		timer.performWithDelay( 100, addlisten )
+		--background:addEventListener("tap",myTapListener)
+			end
+		end
+
+		local function reloadmenu( event)
+			button1 = widget.newButton
+		{
+		width = 104,
+		height = 58,
+		defaultFile = "images/replay.png",
+		overFile = "images/replay2.png",
+		onEvent = Replay
+		}
+-- Center the button
+		button1.x = display.contentCenterX
+		button1.y = display.contentCenterY
+		background:removeEventListener("tap",myTapListener)
+		Runtime:addEventListener( "enterFrame", scorepoints )
+		--timer.performWithDelay( 10, scorepoints )
+
+		end
+
+		local function loadscore( event )
+			scoreboard = display.newImage("images/scoreboard1.png")
+			scoreboard:translate( w * 0.5, h  )
+			displayscoreboard = true
+			
+			--timer.performWithDelay( 1000, scorepoints )
+			--displayscore = display.newText( tostring (score), w*0.5 , h*0.3, native.systemFont, 24 )
+			transition.to(scoreboard,{y = h * 0.4 , time = 500, delay = 0, transition = easing.inOutSine, onComplete=reloadmenu})
+		end
+
+
 		local function birdcollision(self, event)
 		   if event.phase == "began" then
 		   		--background:setFillColor(255,255,255)
+		   		bird:removeEventListener("collision",bird)
 
 		   	local function  secondSound( event )
 		   		local golpe = audio.loadSound("sounds/caida.mp3")
@@ -262,7 +386,14 @@
 		   	   rectangulo:setFillColor(255,255,255)
 		       transition.to(rectangulo,{time=100,alpha=0 })
 
-		       --composer.gotoScene("menu")
+		       gameover = display.newImage("images/gameover.png")
+				gameover:translate( w /2, gameover.height * 0.5)
+				displaygameover = true
+				local function bouncegameover( event )
+					print ("ve pa bajo")
+					transition.to( gameover, { y = gameover.y + 20  , time=300, transition=easing.inOutSine, onComplete=loadscore} )
+				end
+				transition.to( gameover, { y = gameover.y - 30 , time=300, transition=easing.inOutSine, onComplete=bouncegameover } )
 
 		   	end
 		       isdead = true
