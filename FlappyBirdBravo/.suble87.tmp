@@ -1,4 +1,3 @@
---<<<<<<< HEAD
 -----------------------------------------------------------------------------------------
 --
 -- main.lua
@@ -16,8 +15,6 @@ local function myTapListener( event )
     --El pajaro salta con velocidad
   bird.rotation=-45
 	bird:setLinearVelocity(0,-300)
-	local vuelosound = audio.loadSound("vuelo.mp3")
-	audio.play(vuelosound)
     return true
 end
 
@@ -114,24 +111,22 @@ Runtime:addEventListener( "enterFrame", moveground )
 local function birdcollision(self, event)
 	if event.phase == "began" then
 		print ("died")
-		local golpesound = audio.loadSound("golpe.mp3")
-		audio.play(golpesound)
 	end
 end
 		
 bird.collision = birdcollision
 bird:addEventListener("collision",bird)
 
-
+local vuelosound = audio.loadSound("vuelo.mp3")
 local menusound = audio.loadSound("menu.mp3")
 local golpesound = audio.loadSound("golpe.mp3")
 local caidasound = audio.loadSound("caida.mp3")
---=======
-local composer = require( "composer" )
-<<<<<<< HEAD
-composer.gotoScene( "inicio" )
-=======
-composer.gotoScene( "menu" )
--->>>>>>> origin/master
->>>>>>> origin/master
 
+local function birdfly(self, event )
+	if event.phase=="began" then
+		audio.play(vuelosound)
+	end
+end
+
+bird:addEventListener("touch", bird)
+birdfly = bird.touch
