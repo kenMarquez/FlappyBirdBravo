@@ -2,6 +2,7 @@
 	composer.removeHidden()
 	physics = require("physics")
 	widget = require("widget")
+
 	local scene = composer.newScene()
 	local ego =require("ego" )
 	local saveFile = ego.saveFile
@@ -54,11 +55,14 @@
 			bird:setLinearVelocity(0,-200)
 
 
-			local vuelosound = audio.loadSound("sounds/vuelo.mp3")
-			audio.play(vuelosound)
+			--local vuelosound = audio.loadSound("sounds/vuelo.mp3")
+			--audio.play(vuelosound)
+			media.setSoundVolume( 1 )
+			media.playSound( "vuelo.mp3" )
+
 		  	
-		  	transition.to( bird, { rotation=-30 , time=220, transition=easing.inOutSine } )
-		 	transition.to( bird, { rotation=89,time=240 , delay=700,transition=easing.inOutSine } )    
+		  	transition.to( bird, { rotation=-25 , time=180, transition=easing.inOutSine } )
+		 	transition.to( bird, { rotation=89,time=260 , delay=600,transition=easing.inOutSine } )    
 			bird:setLinearVelocity(0,-245)
 		end
 		  	return true
@@ -70,6 +74,7 @@
 	   local sceneGroup = self.view
 	   w = display.contentWidth
 	   h = display.contentHeight
+
 	    --w = display.viewableContentWidth
 		-- h = display.viewableContentHeight
 		-- --carga la imagen de fondo
@@ -95,7 +100,7 @@
 	      -- Example: start timers, begin animation, play audio, etc.   
 		--carga la imagen de fondo	
 			physics.start()
-
+   
 			splashImage = display.newImage("images/splash.png")
 			splashImage:translate( w /2, h/2 )
 			visibleSplash = true
@@ -131,7 +136,7 @@
 		physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
 
 		-- aumenta la gravaded para que el pájaro caiga más rápido
-		bird.gravityScale = 2
+		bird.gravityScale = 2.2
 		--define la distancia entre los pipes en funcion del tamaño del pájaro
 		--gap = bird.height * 2
 		gap = bird.height *4
@@ -257,8 +262,9 @@
 			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 			end
 			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
-				local punto = audio.loadSound("sounds/punto.mp3")
-				audio.play(punto)
+				--local punto = audio.loadSound("sounds/punto.mp3")
+				--audio.play(punto)
+				media.playSound( "punto.mp3" )
 				newpipe1 = false
 				score = score + 1
 				if (score> tonumber(highscore)) then
@@ -270,8 +276,9 @@
 			end
 
 			if (pipedown2.x-pipedown2.width/2.8 <= bird.x and newpipe2) then
-				local punto = audio.loadSound("sounds/punto.mp3")
-				audio.play(punto)
+				--local punto = audio.loadSound("sounds/punto.mp3")
+				--audio.play(punto)
+				media.playSound( "punto.mp3" )
 
 				newpipe2 = false
 				score = score + 1
@@ -343,7 +350,7 @@
 		}
 -- Center the button
 		button1.x = display.contentCenterX
-		button1.y = display.contentCenterY
+		button1.y = display.contentCenterY+ 20
 		background:removeEventListener("tap",myTapListener)
 		Runtime:addEventListener( "enterFrame", scorepoints )
 		--timer.performWithDelay( 10, scorepoints )
@@ -367,13 +374,17 @@
 		   		bird:removeEventListener("collision",bird)
 
 		   	local function  secondSound( event )
-		   		local golpe = audio.loadSound("sounds/caida.mp3")
-				audio.play(golpe)
+		   		--local golpe = audio.loadSound("sounds/caida.mp3")
+		   		--audio.setVolume( 1, { channel=1 } ) 
+				--audio.play(golpe)
+				media.playSound( "caida.mp3" )
 		   	end
 		   		
 		   	if(not isdead) then
-		   		local golpe = audio.loadSound("sounds/golpe.mp3")
-				audio.play(golpe)
+		   		--local golpe = audio.loadSound("golpe.mp3")
+				--audio.play(golpe)
+				--audio.setVolume( 1) 				
+				media.playSound( "golpe.mp3" )
 				print(gnd1.y)
 				print(bird.y)
 				altura = gnd1.y-gnd1.height+3
@@ -390,11 +401,9 @@
 				gameover:translate( w /2, gameover.height * 0.5)
 				displaygameover = true
 				local function bouncegameover( event )
-					print ("ve pa bajo")
 					transition.to( gameover, { y = gameover.y + 20  , time=300, transition=easing.inOutSine, onComplete=loadscore} )
 				end
 				transition.to( gameover, { y = gameover.y - 30 , time=300, transition=easing.inOutSine, onComplete=bouncegameover } )
-
 		   	end
 		       isdead = true
 		       bird:pause()
