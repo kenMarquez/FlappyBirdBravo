@@ -321,6 +321,14 @@
 		end
 
 			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+
+			local function postScoreSubmit( event )
+   --whatever code you need following a score submission...
+   			return true
+			end
+
+
+
 		local function scoreupdate( event )
 			display.remove( displayscore )
 			if (displayhighscore ~= nil) then
@@ -340,6 +348,13 @@
 				if (score> tonumber(highscore)) then
 					highscore = score
 					saveFile("highscore.txt", highscore)
+					myCategory = "CgkIy6imvI0YEAIQCg"
+					gameNetwork.request( "setHighScore",
+					{
+					   localPlayerScore = { category=myCategory, value=tonumber(highscore) },
+					   listener = postScoreSubmit
+					} )
+
 				end
 				print(score)
 
@@ -388,6 +403,8 @@
 
 		if ( "ended" == event.phase ) then
 		display.remove( button1 )
+		display.remove( buttonachive )
+		display.remove( buttonleader )
 		display.remove( scoreboard)
 		display.remove( gameover )
 
@@ -432,6 +449,16 @@
 			end
 		end
 
+		local function showAchievements( event )
+		gameNetwork.show( "achievements" )
+   		return true
+		end
+
+		local function showLeaderboards( event )
+   		gameNetwork.show( "leaderboards" )
+   		return true
+		end
+
 		local function reloadmenu( event)
 			button1 = widget.newButton
 		{
@@ -444,6 +471,35 @@
 -- Center the button
 		button1.x = display.contentCenterX
 		button1.y = display.contentCenterY+ 20
+
+		buttonachive = widget.newButton
+		{
+		width = 104,
+		height = 58,
+		defaultFile = "images/achivements_button.png",
+		overFile = "images/achivements_button.png",
+		onEvent = showAchievements
+		}
+-- Center the button
+		buttonachive.x = display.contentCenterX - 15 - button1.width/2
+		buttonachive.y = display.contentCenterY+ 30 + buttonachive.height
+
+		buttonleader = widget.newButton
+		{
+		width = 104,
+		height = 58,
+		defaultFile = "images/leader_button.png",
+		overFile = "images/leader_button.png",
+		onEvent = showAchievements
+		}
+-- Center the button
+		buttonleader.x = display.contentCenterX + 15 + button1.width/2
+		buttonleader.y = display.contentCenterY + 30 + buttonachive.height
+
+
+
+
+
 		background:removeEventListener("tap",myTapListener)
 		Runtime:addEventListener( "enterFrame", scorepoints )
 		--timer.performWithDelay( 10, scorepoints )
