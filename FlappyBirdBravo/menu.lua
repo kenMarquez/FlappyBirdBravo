@@ -1,6 +1,6 @@
 
 	local composer = require( "composer" )
-	scene = composer.newScene()
+	local	scene = composer.newScene()
 
 	local gameNetwork2 = require( "gameNetwork" )
 	local playerName2
@@ -68,6 +68,16 @@
 		highscore = loadFile ("highscore.txt")
 
 		print ("Highscore is", highscore)
+
+
+	function unlockMyAhievement( achivement  )				
+					--myAchievement = "CgkIy6imvI0YEAIQAg"					
+					gameNetwork2.request( "unlockAchievement",
+					{
+   					achievement = { identifier=achivement, percentComplete=100, showsCompletionBanner=true },
+   					listener = achievementRequestCallback
+					} )
+			end
 	---------------------------------------------------------------------------------
 	-- All code outside of the listener functions will only be executed ONCE
 	-- unless "composer.removeScene()" is called.
@@ -306,11 +316,11 @@
 				display.remove( displayhighscore )
 			end
 
-			--displayscore = display.newText( tostring (score), w * 0.5 + 75, h*0.3 -18, "font", 14 )
-			--displayhighscore = display.newText( highscore, w * 0.5 + 75, h*0.3 + 25, "font", 14 )
+			displayscore = display.newText( tostring (score), w * 0.5 + 75, h*0.3 -18, "font", 14 )
+			displayhighscore = display.newText( highscore, w * 0.5 + 75, h*0.3 + 25, "font", 14 )
 		end
 
-			--displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 		local function scoreupdate( event )
 			display.remove( displayscore )
 			if (displayhighscore ~= nil) then
@@ -318,7 +328,7 @@
 			end
 
 			if (not isdead) then
-			--displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 			end
 			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
 				--local punto = audio.loadSound("sounds/punto.mp3")
@@ -350,14 +360,27 @@
 				print(score)
 			end
 
+
 			if (score ==  1) then
-					myAchievement = "CgkIy6imvI0YEAIQAg"					
-					gameNetwork2.request( "unlockAchievement",
-					{
-   					achievement = { identifier=myAchievement, percentComplete=100, showsCompletionBanner=true },
-   					listener = achievementRequestCallback
-					} )
+				myAchievement = "CgkIy6imvI0YEAIQAg"					
+				unlockMyAhievement(myAchievement)
 				end
+			if (score ==  5) then				
+				myAchievement = "CgkIy6imvI0YEAIQAw"					
+				unlockMyAhievement(myAchievement)
+			end
+			if (score ==  20) then				
+				myAchievement = "CgkIy6imvI0YEAIQBA"					
+				unlockMyAhievement(myAchievement)
+			end
+			if (score == 40 ) then				
+				myAchievement = "CgkIy6imvI0YEAIQBQ"					
+				unlockMyAhievement(myAchievement)
+			end
+			if (score == 50 ) then				
+				myAchievement = "CgkIy6imvI0YEAIQBg"					
+				unlockMyAhievement(myAchievement)
+			end
 
 		end
 
@@ -461,7 +484,7 @@
 		   	   rectangulo:setFillColor(255,255,255)
 		       transition.to(rectangulo,{time=100,alpha=0 })
 
-		       gameover = display.newImage("images/gameover.png")
+   		       gameover = display.newImage("images/gameover.png")
 				gameover:translate( w /2, gameover.height * 0.5)
 				displaygameover = true
 				local function bouncegameover( event )
@@ -476,11 +499,7 @@
 		       
 		bird.collision = birdcollision
 		bird:addEventListener("collision",bird)
-
-		Runtime:addEventListener( "enterFrame", scoreupdate )
-
-
-			
+		Runtime:addEventListener( "enterFrame", scoreupdate )			
 
 	   end
 	end
