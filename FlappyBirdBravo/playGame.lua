@@ -1,6 +1,5 @@
 	local composer = require( "composer" )	
 	scene = composer.newScene()
-
 	local gameNetwork2 = require( "gameNetwork" )
 	local playerName2
 
@@ -42,6 +41,7 @@
 	end
 
 	Runtime:addEventListener( "system", systemEvents )
+
 
 	-- "scene:create()"
 	function scene:create( event )

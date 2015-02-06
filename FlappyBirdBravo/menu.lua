@@ -1,33 +1,34 @@
+
 	local composer = require( "composer" )
-	composer.removeHidden()
-	
-	local gameNetwork = require( "gameNetwork" )
-	local playerName
+	scene = composer.newScene()
+
+	local gameNetwork2 = require( "gameNetwork" )
+	local playerName2
 
 	local function loadLocalPlayerCallback( event )
-	   playerName = event.data.alias
+	   playerName2 = event.data.alias
 	   saveSettings()  --save player data locally using your own "saveSettings()" function
 	end
 
 	local function gameNetworkLoginCallback( event )
-	   gameNetwork.request( "loadLocalPlayer", { listener=loadLocalPlayerCallback } )
+	   gameNetwork2.request( "loadLocalPlayer", { listener=loadLocalPlayerCallback } )
 	   return true
 	end
 
 	local function gpgsInitCallback( event )
-	   gameNetwork.request( "login", { userInitiated=true, listener=gameNetworkLoginCallback } )
+	   gameNetwork2.request( "login", { userInitiated=true, listener=gameNetworkLoginCallback } )
 	end
 
 	local function gameNetworkSetup()
 	   if ( system.getInfo("platformName") == "Android" ) then
-	      gameNetwork.init( "google", gpgsInitCallback )
+	      gameNetwork2.init( "google", gpgsInitCallback )
 	   else
-	      gameNetwork.init( "gamecenter", gameNetworkLoginCallback )
+	      gameNetwork2.init( "gamecenter", gameNetworkLoginCallback )
 	   end
 	end
 
 	------HANDLE SYSTEM EVENTS------
-	local function systemEvents( event )		
+	local function systemEvents( event )
 	   print("systemEvent " .. event.type)
 	   if ( event.type == "applicationSuspend" ) then
 	      print( "suspending..........................." )
@@ -42,14 +43,15 @@
 	end
 
 	Runtime:addEventListener( "system", systemEvents )
+		
 
 
+
+
+	composer.removeHidden()
 	physics = require("physics")
 	widget = require("widget")
-
-
-
-	local scene = composer.newScene()
+	
 	local ego =require("ego" )
 	local saveFile = ego.saveFile
 	local loadFile = ego.loadFile
@@ -74,6 +76,10 @@
 	-- local forward references should go here
 
 	---------------------------------------------------------------------------------
+
+	
+
+	
 
 
 	local function myTapListener( event )
@@ -120,6 +126,7 @@
 	   local sceneGroup = self.view
 	   w = display.contentWidth
 	   h = display.contentHeight
+
 
 	    --w = display.viewableContentWidth
 		-- h = display.viewableContentHeight
@@ -288,6 +295,7 @@
 
 		Runtime:addEventListener( "enterFrame", moveground )
 
+
 		score = 0
 
 		function scorepoints( event )
@@ -344,7 +352,7 @@
 
 			if (score ==  1) then
 					myAchievement = "CgkIy6imvI0YEAIQAg"					
-					gameNetwork.request( "unlockAchievement",
+					gameNetwork2.request( "unlockAchievement",
 					{
    					achievement = { identifier=myAchievement, percentComplete=100, showsCompletionBanner=true },
    					listener = achievementRequestCallback
