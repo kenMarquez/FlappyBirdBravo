@@ -73,9 +73,21 @@ settings =
 	--
 	android =
 	{
+		googlePlayGamesAppId = "828249838667" ,
 		usesPermissions =
 		{
 			"android.permission.INTERNET",
 		},
 	},
+
+	plugins =
+	{
+   		--key is the name passed to the Lua "require()"
+   		["CoronaProvider.gameNetwork.google"] =
+   	{
+      --required!
+      publisherId = "com.coronalabs",
+   	},
+},
 }
+

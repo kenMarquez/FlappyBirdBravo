@@ -1,7 +1,53 @@
-	composer = require( "composer" )
+	local composer = require( "composer" )
 	composer.removeHidden()
+	
+	local gameNetwork = require( "gameNetwork" )
+	local playerName
+
+	local function loadLocalPlayerCallback( event )
+	   playerName = event.data.alias
+	   saveSettings()  --save player data locally using your own "saveSettings()" function
+	end
+
+	local function gameNetworkLoginCallback( event )
+	   gameNetwork.request( "loadLocalPlayer", { listener=loadLocalPlayerCallback } )
+	   return true
+	end
+
+	local function gpgsInitCallback( event )
+	   gameNetwork.request( "login", { userInitiated=true, listener=gameNetworkLoginCallback } )
+	end
+
+	local function gameNetworkSetup()
+	   if ( system.getInfo("platformName") == "Android" ) then
+	      gameNetwork.init( "google", gpgsInitCallback )
+	   else
+	      gameNetwork.init( "gamecenter", gameNetworkLoginCallback )
+	   end
+	end
+
+	------HANDLE SYSTEM EVENTS------
+	local function systemEvents( event )		
+	   print("systemEvent " .. event.type)
+	   if ( event.type == "applicationSuspend" ) then
+	      print( "suspending..........................." )
+	   elseif ( event.type == "applicationResume" ) then
+	      print( "resuming............................." )
+	   elseif ( event.type == "applicationExit" ) then
+	      print( "exiting.............................." )
+	   elseif ( event.type == "applicationStart" ) then
+	      gameNetworkSetup()  --login to the network here
+	   end
+	   return true
+	end
+
+	Runtime:addEventListener( "system", systemEvents )
+
+
 	physics = require("physics")
 	widget = require("widget")
+
+
 
 	local scene = composer.newScene()
 	local ego =require("ego" )
@@ -57,7 +103,7 @@
 
 			--local vuelosound = audio.loadSound("sounds/vuelo.mp3")
 			--audio.play(vuelosound)
-			media.setSoundVolume( 1 )
+			
 			media.playSound( "vuelo.mp3" )
 
 		  	
@@ -81,6 +127,8 @@
 		background = display.newImageRect("images/background-night.png",w*2,h*2)
 		background:addEventListener("tap",myTapListener)
 		sceneGroup:insert( background )
+
+	
 		
 	   -- Initialize the scene here.
 	   -- Example: add display objects to "sceneGroup", add touch listeners, etc.
@@ -95,10 +143,13 @@
 	   if ( phase == "will" ) then
 	      -- Called when the scene is still off screen (but is about to come on screen).
 	   elseif ( phase == "did" ) then
+
+
 	      -- Called when the scene is now on screen.
 	      -- Insert code here to make the scene come alive.
 	      -- Example: start timers, begin animation, play audio, etc.   
 		--carga la imagen de fondo	
+			counScore =0;
 			physics.start()
    
 			splashImage = display.newImage("images/splash.png")
@@ -247,11 +298,11 @@
 				display.remove( displayhighscore )
 			end
 
-			displayscore = display.newText( tostring (score), w * 0.5 + 75, h*0.3 -18, "font", 14 )
-			displayhighscore = display.newText( highscore, w * 0.5 + 75, h*0.3 + 25, "font", 14 )
+			--displayscore = display.newText( tostring (score), w * 0.5 + 75, h*0.3 -18, "font", 14 )
+			--displayhighscore = display.newText( highscore, w * 0.5 + 75, h*0.3 + 25, "font", 14 )
 		end
 
-		displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+			--displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 		local function scoreupdate( event )
 			display.remove( displayscore )
 			if (displayhighscore ~= nil) then
@@ -259,7 +310,7 @@
 			end
 
 			if (not isdead) then
-			displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
+			--displayscore = display.newText( tostring (score), w*0.5, h*0.1, "font", 30 )
 			end
 			if (pipedown1.x-pipedown2.width/3.1 <= bird.x and newpipe1) then
 				--local punto = audio.loadSound("sounds/punto.mp3")
@@ -267,11 +318,13 @@
 				media.playSound( "punto.mp3" )
 				newpipe1 = false
 				score = score + 1
+				
 				if (score> tonumber(highscore)) then
 					highscore = score
 					saveFile("highscore.txt", highscore)
 				end
 				print(score)
+
 
 			end
 
@@ -288,6 +341,15 @@
 				end
 				print(score)
 			end
+
+			if (score ==  1) then
+					myAchievement = "CgkIy6imvI0YEAIQAg"					
+					gameNetwork.request( "unlockAchievement",
+					{
+   					achievement = { identifier=myAchievement, percentComplete=100, showsCompletionBanner=true },
+   					listener = achievementRequestCallback
+					} )
+				end
 
 		end
 
@@ -369,21 +431,15 @@
 
 
 		local function birdcollision(self, event)
-		   if event.phase == "began" then
-		   		--background:setFillColor(255,255,255)
+		   if event.phase == "began" then		   		
 		   		bird:removeEventListener("collision",bird)
 
 		   	local function  secondSound( event )
-		   		--local golpe = audio.loadSound("sounds/caida.mp3")
-		   		--audio.setVolume( 1, { channel=1 } ) 
-				--audio.play(golpe)
+		   		
 				media.playSound( "caida.mp3" )
 		   	end
 		   		
-		   	if(not isdead) then
-		   		--local golpe = audio.loadSound("golpe.mp3")
-				--audio.play(golpe)
-				--audio.setVolume( 1) 				
+		   	if(not isdead) then		   				
 				media.playSound( "golpe.mp3" )
 				print(gnd1.y)
 				print(bird.y)
