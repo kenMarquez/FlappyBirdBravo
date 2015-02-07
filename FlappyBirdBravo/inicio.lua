@@ -57,6 +57,8 @@
 
 
 	function moveground( event )
+	
+    
 		gnd1.x = gnd1.x + vel
 		gnd2.x = gnd2.x + vel			
 			--si los grounds se salen, vuelvan a aparecer a un lado del otro
@@ -108,7 +110,7 @@
 				--bird
 				local sheetData2 = { width=40, height=27.5, numFrames=3, sheetContentWidth=40, sheetContentHeight=84 }
 				local mySheet2 = graphics.newImageSheet( "images/bird2.png", sheetData2 )
-				local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=600,loopCount,loopDirection="forward"}
+				local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=440,loopCount,loopDirection="forward"}
 				bird =display.newSprite(mySheet2,runningSecuenceFly2)
 				bird.x = display.contentWidth/2  --center the sprite horizontally
 				xposition = bird.x
@@ -119,22 +121,21 @@
 				bird:play()  
 				local function bounceFlappy(flappy, speed)
 				    local function bounceFlappyDown(flappy)
-				      transition.to( flappy, { y = flappy.y + 7 , time=450, transition=easing.inOutSine, onComplete=bounceFlappy } )
+				      transition.to( flappy, { y = flappy.y + 8 , time=360, transition=easing.inOutSine, onComplete=bounceFlappy } )
 				    end
-				    transition.to( flappy, { y = flappy.y - 7 , time=450, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
+				    transition.to( flappy, { y = flappy.y - 8 , time=360, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
 				end
 				bounceFlappy(bird)
 				vel = -4
 
-				offset=-0
+				offset=-33
 
 				gnd1 =display.newImage("ground.png", 0, h )
 				physics.addBody( gnd1, "static" )
 
-				gnd2 =display.newImage("ground.png", 0, h )
+				gnd2 =display.newImage("ground.png", 0, h)
 				physics.addBody( gnd2, "static" )
 				gnd2.x = gnd1.x + gnd1.width * 0.5 + gnd2.width*0.5 + offset				
-
 				
 			Runtime:addEventListener( "enterFrame", moveground )
 

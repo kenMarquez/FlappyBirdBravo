@@ -2,28 +2,28 @@
 	local composer = require( "composer" )
 	local	scene = composer.newScene()
 
-	local gameNetwork2 = require( "gameNetwork" )
-	local playerName2
+	local gameNetwork = require( "gameNetwork" )
+	local playerName
 
 	local function loadLocalPlayerCallback( event )
-	   playerName2 = event.data.alias
+	   playerName = event.data.alias
 	   saveSettings()  --save player data locally using your own "saveSettings()" function
 	end
 
 	local function gameNetworkLoginCallback( event )
-	   gameNetwork2.request( "loadLocalPlayer", { listener=loadLocalPlayerCallback } )
+	   gameNetwork.request( "loadLocalPlayer", { listener=loadLocalPlayerCallback } )
 	   return true
 	end
 
 	local function gpgsInitCallback( event )
-	   gameNetwork2.request( "login", { userInitiated=true, listener=gameNetworkLoginCallback } )
+	   gameNetwork.request( "login", { userInitiated=true, listener=gameNetworkLoginCallback } )
 	end
 
 	local function gameNetworkSetup()
 	   if ( system.getInfo("platformName") == "Android" ) then
-	      gameNetwork2.init( "google", gpgsInitCallback )
+	      gameNetwork.init( "google", gpgsInitCallback )
 	   else
-	      gameNetwork2.init( "gamecenter", gameNetworkLoginCallback )
+	      gameNetwork.init( "gamecenter", gameNetworkLoginCallback )
 	   end
 	end
 
@@ -72,7 +72,7 @@
 
 	function unlockMyAhievement( achivement  )				
 					--myAchievement = "CgkIy6imvI0YEAIQAg"					
-					gameNetwork2.request( "unlockAchievement",
+					gameNetwork.request( "unlockAchievement",
 					{
    					achievement = { identifier=achivement, percentComplete=100, showsCompletionBanner=true },
    					listener = achievementRequestCallback
@@ -96,36 +96,25 @@
 		if (visibleSplash) then
 			display.remove(splashImage)
 			visibleSplash=false
+			bird:setSequence( "fast" )
+			bird:play()		    
 		end
 			display.remove(rectangulo)
 				--inicia lla fisica, talvez esto debería de ejecutarse solo la primera vez
 		if (not isdead) then
 			physics.start()
-			paused = false
-			isdead = false
-			bird:play()
-		    --code executed when the button is tapped
-		    print( "object tapped = "..tostring(event.target) )  --'event.target' is the tapped object
-		    --bird:applyForce(0,-500,bird.x,bird.y)
-		    --El pajaro salta con velocidad  bird.rotation=-45
-		 --  transition.cancel()
-			-- bird:setLinearVelocity(0,-300)
-		 --  transition.to( bird, { rotation=-35 , time=210, transition=easing.inOutSine } )
-		 --  transition.to( bird, { rotation=89 , time=250, delay=700,transition=easing.inOutSine } )    
-			-- bird:setLinearVelocity(0,-300)
-			transition.cancel()
-			bird:setLinearVelocity(0,-200)
-
-
-			--local vuelosound = audio.loadSound("sounds/vuelo.mp3")
-			--audio.play(vuelosound)
+			paused = false			
+		
 			
+		
+			transition.cancel()			
 			media.playSound( "vuelo.mp3" )
 
+
 		  	
-		  	transition.to( bird, { rotation=-25 , time=180, transition=easing.inOutSine } )
-		 	transition.to( bird, { rotation=89,time=260 , delay=600,transition=easing.inOutSine } )    
-			bird:setLinearVelocity(0,-245)
+		  	transition.to( bird, { rotation=-15 , time=215, transition=easing.inOutSine } )
+		 	transition.to( bird, { rotation=70,time=290 , delay=600,transition=easing.inOutSine } )    
+			bird:setLinearVelocity(0,-265)
 		end
 		  	return true
 		end
@@ -156,6 +145,7 @@
 
 	   local sceneGroup = self.view
 	   local phase = event.phase
+	   local deadCounter =0
 
 	   if ( phase == "will" ) then
 	      -- Called when the scene is still off screen (but is about to come on screen).
@@ -183,7 +173,10 @@
 
 			local sheetData2 = { width=40, height=27.5, numFrames=3, sheetContentWidth=40, sheetContentHeight=84 }
 			local mySheet2 = graphics.newImageSheet( "images/bird2.png", sheetData2 )
-			local runningSecuenceFly2 ={name="normalRun",start=1,count=3,time=550,loopCount,loopDirection="forward"}
+			local runningSecuenceFly2 ={
+					{name="normalRun",start=1,count=3,time=440,loopCount,loopDirection="forward"},
+					{name="fast",start=1,count=3,time=200,loopCount,loopDirection="forward"}
+				}
 			bird =display.newSprite(mySheet2,runningSecuenceFly2)
 			bird.x = display.contentWidth/3.1  --center the sprite horizontally
 			xposition = bird.x
@@ -194,9 +187,9 @@
 			bird:play()  
 			local function bounceFlappy(flappy, speed)
 			    local function bounceFlappyDown(flappy)
-			      transition.to( flappy, { y = flappy.y + 10 , time=300, transition=easing.inOutSine, onComplete=bounceFlappy } )
+			      transition.to( flappy, { y = flappy.y + 8 , time=360, transition=easing.inOutSine, onComplete=bounceFlappy } )
 			    end
-			    transition.to( flappy, { y = flappy.y - 10 , time=300, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
+			    transition.to( flappy, { y = flappy.y - 8 , time=360, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
 			  end
 			  bounceFlappy(bird)
 			  physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
@@ -204,10 +197,10 @@
 		physics.addBody(bird,{density=1,friction=0.5,bounce=0.3})
 
 		-- aumenta la gravaded para que el pájaro caiga más rápido
-		bird.gravityScale = 2.2
+		bird.gravityScale = 2.3
 		--define la distancia entre los pipes en funcion del tamaño del pájaro
 		--gap = bird.height * 2
-		gap = bird.height *4
+		gap = bird.height *4.5
 		--saca dos pares de pipes
 		pipedown1 = display.newImage("pipeDown.png",w * 2,h)
 		pipeup1 = display.newImage("pipeUp.png",w * 2,-gap)
@@ -217,7 +210,7 @@
 		--aumenta la gravedad para que el pájaro caiga más rápido
 		--bird.gravityScale = 2
 
-		vel = -4
+		vel = -4.5
 		--physics.addBody(bird,"static")
 		--les pone física a los pipes
 		physics.addBody( pipedown1, "static" )
@@ -235,14 +228,14 @@
 		gnd1=display.newImage("ground.png", 0, h )
 		physics.addBody( gnd1, "static" )
 		gnd2=display.newImage("ground.png", 0, h )
-		physics.addBody( gnd2, "static" )
+		physics.addBody( gnd2, "static" )		
 		--define un offset para una buena continuidad entre los grounds
-		offset=-0
+		offset=-33
 		--coloca el segundo ground		
 		gnd2.x = gnd1.x + gnd1.width * 0.5 + gnd2.width*0.5 + offset
 		--define la distancia maxima y minima de los pipes
 		maxpipe = h + pipedown1.height * 0.5 - gnd1.height
-		minpipe = pipedown1.height * 0.5 + gap
+		minpipe = pipedown1.height * 0.5 + gap + bird.height
 
 		--coloca los pipes en alturas random
 		pipedown1.x = w * 2
@@ -259,6 +252,7 @@
 
 
 		local function moveground( event )
+			
 			bird.x = xposition
 			if (bird.y < -bird.height*2) then
 				bird.y = -bird.height*2
@@ -384,11 +378,11 @@
 				myAchievement = "CgkIy6imvI0YEAIQAw"					
 				unlockMyAhievement(myAchievement)
 			end
-			if (score ==  20) then				
+			if (score ==  15) then				
 				myAchievement = "CgkIy6imvI0YEAIQBA"					
 				unlockMyAhievement(myAchievement)
 			end
-			if (score == 40 ) then				
+			if (score == 30 ) then				
 				myAchievement = "CgkIy6imvI0YEAIQBQ"					
 				unlockMyAhievement(myAchievement)
 			end
@@ -410,7 +404,8 @@
 
 		bird.x = display.contentWidth/4
 		bird.y = display.contentHeight/2
-		bird:play() 
+		bird:setSequence( "normalRun" )
+		bird:play()		    
 		bird:setLinearVelocity( 0, 0 )
 		bird.rotation = 0
 		isdead = false
@@ -455,6 +450,7 @@
 		end
 
 		local function showLeaderboards( event )
+		print("entro")
    		gameNetwork.show( "leaderboards" )
    		return true
 		end
@@ -484,14 +480,26 @@
 		buttonachive.x = display.contentCenterX - 15 - button1.width/2
 		buttonachive.y = display.contentCenterY+ 30 + buttonachive.height
 
+
+
 		buttonleader = widget.newButton
 		{
 		width = 104,
 		height = 58,
 		defaultFile = "images/leader_button.png",
 		overFile = "images/leader_button.png",
-		onEvent = showAchievements
+		onEvent = showLeaderboards
 		}
+		--leader = display.newImage("images/leader_button.png");
+				
+				--leader:translate(display.contentCenterX + 15 + button1.width/2,display.contentCenterY + 30 + buttonachive.height)
+		--		leader.xScale = 104
+		--		leader.yScale = 58
+				--leader:addEventListener("touch", showLeaderboards)
+
+
+
+
 -- Center the button
 		buttonleader.x = display.contentCenterX + 15 + button1.width/2
 		buttonleader.y = display.contentCenterY + 30 + buttonachive.height
@@ -528,10 +536,12 @@
 		   		
 		   	if(not isdead) then		   				
 				media.playSound( "golpe.mp3" )
-				print(gnd1.y)
-				print(bird.y)
-				altura = gnd1.y-gnd1.height+3
-				print(altura)
+				deadCounter= deadCounter+1
+				if (deadCounter == 10) then
+					myAchievement = "CgkIy6imvI0YEAIQBw"					
+					unlockMyAhievement(myAchievement)			
+				end								
+				altura = gnd1.y-gnd1.height+3				
 				if ( bird.y < altura) then
 					timer.performWithDelay(500,secondSound)
 				end
